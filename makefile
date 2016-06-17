@@ -3,6 +3,8 @@ CFLAGS=-f elf64
 LINKER=ld
 OBJ=calc.o
 
+all: calc
+
 %.o: %.asm
 	$(NASM) $(CFLAGS) -o $@ $<
 
