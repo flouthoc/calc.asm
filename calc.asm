@@ -15,7 +15,10 @@ _start:
 	add rsp, 8 ;;remove argv[0]
 	pop rsi
 	cmp byte[rsi], 0x2B
-	jne invalid_operator
+	je addition
+	jmp invalid_operator
+
+addition:
 	pop rsi
 	call char_to_int
 	mov r10, rax
@@ -23,18 +26,17 @@ _start:
 	call char_to_int
 	add rax, r10
 
+	
+
+print_result:
 	call int_to_char
-	;mov r9, BYTE_BUFFER
-	;add al, 48
-	;mov [r9], al
-	;add byte [r9], 48
 	mov rax, 1
 	mov rdi, 1
 	mov rsi, r9
 	mov rdx, 2
 	syscall
 	jmp exit
-	;;jne .few_args
+
 	
 few_args:
 	mov rax, 1
