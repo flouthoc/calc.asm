@@ -16,6 +16,8 @@ _start:
 	pop rsi
 	cmp byte[rsi], 0x2B
 	je addition
+	cmp byte[rsi], 0x2D
+	je subtraction
 	jmp invalid_operator
 
 addition:
@@ -25,6 +27,14 @@ addition:
 	pop rsi
 	call char_to_int
 	add rax, r10
+
+subtraction:
+	pop rsi
+	call char_to_int
+	mov r10, rax
+	pop rsi
+	call char_to_int
+	sub rax, r10
 
 	
 
