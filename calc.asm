@@ -116,6 +116,10 @@ int_to_char:
         dec r9
         jmp .loop_block
 
+
+count_digits:
+	
+
 .return_block:
 	inc r9
 	ret
