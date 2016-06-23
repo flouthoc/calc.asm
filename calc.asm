@@ -39,6 +39,7 @@ subtraction:
 	
 
 print_result:
+	call count_digits ;count digits before printing it
 	call int_to_char
 	mov rax, 1
 	mov rdi, 1
