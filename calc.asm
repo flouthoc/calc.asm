@@ -14,10 +14,16 @@ _start:
 	jne few_args
 	add rsp, 8 ;;remove argv[0]
 	pop rsi
+
+	cmp byte[rsi], 0x23
+        je multiplication
 	cmp byte[rsi], 0x2B
 	je addition
 	cmp byte[rsi], 0x2D
 	je subtraction
+	cmp byte[rsi], 0x2F
+	je division
+
 	jmp invalid_operator
 
 addition:
@@ -27,6 +33,7 @@ addition:
 	pop rsi
 	call char_to_int
 	add rax, r10
+	jmp print_result
 
 subtraction:
 	pop rsi
@@ -35,8 +42,26 @@ subtraction:
 	pop rsi
 	call char_to_int
 	sub rax, r10
+	jmp print_result
 
-	
+division:
+	pop rsi
+	call char_to_int
+	mov r10, rax
+	pop rsi
+	call char_to_int
+	mov rdx, 0
+	div r10
+	jmp print_result
+
+multiplication:
+	pop rsi
+        call char_to_int
+        mov r10, rax
+        pop rsi
+        call char_to_int
+        
+
 
 print_result:
 	call int_to_char
@@ -46,7 +71,6 @@ print_result:
 	mov rdx, 2
 	syscall
 	jmp exit
-
 	
 few_args:
 	mov rax, 1
@@ -115,7 +139,6 @@ int_to_char:
 	mov [r9], dl
 	dec r9
 	ret
-
 
 exit:
 	mov rax, 60
