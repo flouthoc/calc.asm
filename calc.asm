@@ -39,7 +39,6 @@ subtraction:
 	
 
 print_result:
-	call count_digits ;count digits before printing it
 	call int_to_char
 	mov rax, 1
 	mov rdi, 1
@@ -80,12 +79,6 @@ char_to_int:
 	mov dl, 10
 	
 .loop_block:
-
-	;;cmp rcx, 0x30
-        ;;jb invalid_operand
-        ;;cmp rcx, 0x39
-        ;;jg invalid_operand
-
 	mov cl, [rsi]
 	cmp cl, byte 0
 	je .return_block
@@ -110,19 +103,17 @@ int_to_char:
 .loop_block:
 	mov rdx, 0
 	div rbx
-	cmp rdx, 0
+	cmp rax, 0
         je .return_block
         add dl, 48
         mov [r9], dl
         dec r9
         jmp .loop_block
-
-
-count_digits:
 	
-
 .return_block:
-	inc r9
+	add dl, 48
+	mov [r9], dl
+	dec r9
 	ret
 
 
