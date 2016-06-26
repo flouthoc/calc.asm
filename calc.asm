@@ -44,17 +44,19 @@ addition:
 	add rax, r10 ;Let's add them integer equivalent of <operand1> and integer equivalent of <operand2> 
 	jmp print_result ;Throw cursor at block print cursor , we'll we have to print result right ?
 
-;Same thing we are doing in block subtraction , multiplication and division
-
+; subtraction is basically the same but the order of operands matter
+; we want to calculate operand1 - operand2
 subtraction:
 	pop rsi
 	call char_to_int
 	mov r10, rax
 	pop rsi
 	call char_to_int
-	sub rax, r10
+	sub r10, rax
+	mov rax, r10
 	jmp print_result
 
+; multiplication is the same, order of operands does not change the result
 multiplication:
 	pop rsi
         call char_to_int
@@ -64,13 +66,18 @@ multiplication:
 	mul r10
 	jmp print_result
 
+; for division the order of operands also matters.
+; since div always divides AX by the given operand move the operands
+; to the correct place
 division:
 	pop rsi
 	call char_to_int
-	mov r10, rax
+	mov r11, rax
 	pop rsi
 	call char_to_int
-	mov rdx, 0
+	mov r10, rax
+	mov rax, r11
+	mov rdx, 0		; DX is used for 2 byte divison, set it to zero
 	div r10
 	jmp print_result
 
@@ -90,28 +97,25 @@ print_result:
 	jmp exit
 
 
-;Read previous comments , just performing printing in these blocks nothing special	
+;Read previous comments, just performing printing in these blocks nothing special
 few_args:
-	mov rax, 1
-	mov rdi, 1
 	mov rsi, FEW_ARGS
-	mov rdx, 17
-	syscall
-	jmp exit
+	mov rdx, 18
+	jmp errmsg
 
 invalid_operator:
-	mov rax, 1
-	mov rdi, 1
 	mov rsi, INVALID_OPERATOR
 	mov rdx, 17
-	syscall
-	jmp exit
+	jmp errmsg
 
 invalid_operand:
-	mov rax, 1
-	mov rdi, 1
 	mov rsi, INVALID_OPERAND
 	mov rdx, 16
+	jmp errmsg
+
+errmsg:
+	mov rax, 1
+	mov rdi, 1
 	syscall
 	jmp exit
 
@@ -187,6 +191,3 @@ exit:
 
 ;We are all done :) If you think you can improve this more make a pull request (http://github.com/flouthoc/calc.asm)
 
-
-
-	
