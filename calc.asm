@@ -44,7 +44,7 @@ addition:
 	add rax, r10 ;Let's add them integer equivalent of <operand1> and integer equivalent of <operand2> 
 	jmp print_result ;Throw cursor at block print cursor , we'll we have to print result right ?
 
-; substraction is basically the same but the order of operands matter
+; subtraction is basically the same but the order of operands matter
 ; we want to calculate operand1 - operand2
 subtraction:
 	pop rsi
@@ -194,6 +194,3 @@ exit:
 
 ;We are all done :) If you think you can improve this more make a pull request (http://github.com/flouthoc/calc.asm)
 
-
-
-	
