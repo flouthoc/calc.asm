@@ -97,28 +97,25 @@ print_result:
 	jmp exit
 
 
-;Read previous comments , just performing printing in these blocks nothing special	
+;Read previous comments, just performing printing in these blocks nothing special
 few_args:
-	mov rax, 1
-	mov rdi, 1
 	mov rsi, FEW_ARGS
 	mov rdx, 18
-	syscall
-	jmp exit
+	jmp errmsg
 
 invalid_operator:
-	mov rax, 1
-	mov rdi, 1
 	mov rsi, INVALID_OPERATOR
 	mov rdx, 17
-	syscall
-	jmp exit
+	jmp errmsg
 
 invalid_operand:
-	mov rax, 1
-	mov rdi, 1
 	mov rsi, INVALID_OPERAND
 	mov rdx, 16
+	jmp errmsg
+
+errmsg:
+	mov rax, 1
+	mov rdi, 1
 	syscall
 	jmp exit
 
