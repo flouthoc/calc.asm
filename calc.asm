@@ -1,3 +1,6 @@
+;author - http://github.com/flouthoc
+;Contributers - Add your name here
+;; ----------------- calc.asm - Minimal arithmetic calculator in x86 assembly -------------------
 section .data
 	FEW_ARGS: db "To Few Arguments", 0xA
 	INVALID_OPERATOR: db "Invalid Operator", 0xA
