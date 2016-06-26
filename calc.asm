@@ -67,9 +67,11 @@ multiplication:
 division:
 	pop rsi
 	call char_to_int
-	mov r10, rax
+	mov r11, rax
 	pop rsi
 	call char_to_int
+	mov r10, rax
+	mov rax, r11
 	mov rdx, 0
 	div r10
 	jmp print_result
