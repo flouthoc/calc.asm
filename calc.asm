@@ -12,7 +12,7 @@ section .text
 	global _start
 
 _start:
-	pop rdx ;remove argc it's not important for me
+	pop rdx ;put argc in rdx from the stack, so we can check number of arguments
 	cmp rdx, 4 ;if number of arguments are lesser that 4 i.e <operator> <operand1> <operand2>
 	jne few_args ; go to error block - prompt 'FEW_ARGS' and exit
 	add rsp, 8 ; remove argv[0] that is programme name
