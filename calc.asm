@@ -2,21 +2,21 @@
 ;Contributers - Add your name here
 ;; ----------------- calc.asm - Minimal arithmetic calculator in x86 assembly -------------------
 section .data
-	FEW_ARGS: db "To Few Arguments", 0xA
+	FEW_ARGS: db "Too Few Arguments", 0xA
 	INVALID_OPERATOR: db "Invalid Operator", 0xA
 	INVALID_OPERAND: db "Invalid Operand", 0XA
-	BYTE_BUFFER: times 10 db 0 ;Its just a memory to size 10 , each slot holds the value 0
+	BYTE_BUFFER: times 10 db 0 ;It's just a memory to size 10 , each slot holds the value 0
 
 section .text
 
 	global _start
 
 _start:
-	pop rdx ;remove argc its not important for me
+	pop rdx ;remove argc it's not important for me
 	cmp rdx, 4 ;if number of arguments are lesser that 4 i.e <operator> <operand1> <operand2>
-	jne few_args ; go to error block - promt 'FEW_ARGS' and exit
+	jne few_args ; go to error block - prompt 'FEW_ARGS' and exit
 	add rsp, 8 ; remove argv[0] that is programme name
-	pop rsi ;lets pop our first argument (i.e argv[1]) from argument stack which is our operand
+	pop rsi ;let's pop our first argument (i.e argv[1]) from argument stack which is our operand
 
 	;This is part is all checking part which switches the block according to our <operand> + - / *
 	cmp byte[rsi], 0x2A ;If operator is '*' then goto block multiplication , can be used only if escaped manually while giving input 
@@ -31,20 +31,20 @@ _start:
 	je division
 
 	;If <operator> does not match to any case then goto block invalid_operator
-	jmp invalid_operator ; go to error block - promt 'Invalid Operator' and exit
+	jmp invalid_operator ; go to error block - prompt 'Invalid Operator' and exit
 
 addition:
-	pop rsi ;Lets Pop our second argument (i.e argv[2]) from argument stack which is our <operand1>
+	pop rsi ;Let's Pop our second argument (i.e argv[2]) from argument stack which is our <operand1>
 	;Well even if it is a number it is in its ASCII code representation lets convert it to our actual integer
 	;This is function will take number in its ASCII form (rsi as arugment) and return its integer equivalent in rax
 	call char_to_int
 	mov r10, rax ;Lets store integer equivalent of <operand1> in r10
-	pop rsi ;Lets Pop our third argument (i.e argv[3]) from argument stack which is our <operand2>
+	pop rsi ;Let's Pop our third argument (i.e argv[3]) from argument stack which is our <operand2>
 	call char_to_int ;Do same for <operand2>
-	add rax, r10 ;Lets add them integer equivalent of <operand1> and integer equivalent of <operand2> 
-	jmp print_result ;Throw cursor at block print cursor , well we have to print result right ?
+	add rax, r10 ;Let's add them integer equivalent of <operand1> and integer equivalent of <operand2> 
+	jmp print_result ;Throw cursor at block print cursor , we'll we have to print result right ?
 
-;Same thing we are doing in block subtration , multiplication and division
+;Same thing we are doing in block subtraction , multiplication and division
 
 subtraction:
 	pop rsi
@@ -86,7 +86,7 @@ print_result:
 	mov rdi, 1 ;Descriptor where we want to write , 1 is for stdout
 	mov rsi, r9 ;This is pointer to the string which was returned by int_to_char
 	mov rdx, r11 ;r11 stores the number of chars in our string , read about how to make syscall in asm
-	syscall ;intruppt , give the wheel to OS it'll handle your systemcall
+	syscall ;interrupt , give the wheel to OS it'll handle your systemcall
 	jmp exit
 
 
@@ -116,7 +116,7 @@ invalid_operand:
 	jmp exit
 
 
-;This is the function which will convert our character input to integeters
+;This is the function which will convert our character input to integers
 ;Argument - pointer to string or char ( takes rsi as argument )
 ;Returns equivalent integer value (in rax)
 char_to_int:
@@ -140,7 +140,7 @@ char_to_int:
 
 	sub cl, 48 ;Convert ASCII to integer by subtracting 48 , google about it
 	mul dl ;Is it the most significant digit and other digits are also there in number then shift its place like unit-to-tenth , tenth-to-hundred.
-	add al, cl ;Add other digit to the exisitng greater number like if number is 23 then add 3 to 20.
+	add al, cl ;Add other digit to the existing greater number like if number is 23 then add 3 to 20.
 	inc rsi ;Increment the rsi's index i.e (rdi + index ) we are incrementing the index
 
 	jmp .loop_block ;Keep looping until loop breaks on its own
@@ -174,7 +174,7 @@ int_to_char:
         jmp .loop_block ;Loop until it breaks on its own
 	
 .return_block:
-	add dl, 48 ;Dont forget to repeat the routine for out last MSB as loop ended early
+	add dl, 48 ;Don't forget to repeat the routine for out last MSB as loop ended early
 	mov [r9], dl
 	dec r9
 	inc r11
