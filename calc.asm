@@ -95,7 +95,7 @@ few_args:
 	mov rax, 1
 	mov rdi, 1
 	mov rsi, FEW_ARGS
-	mov rdx, 17
+	mov rdx, 18
 	syscall
 	jmp exit
 
