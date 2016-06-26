@@ -52,7 +52,8 @@ subtraction:
 	mov r10, rax
 	pop rsi
 	call char_to_int
-	sub rax, r10
+	sub r10, rax
+	mov rax, r10
 	jmp print_result
 
 multiplication:
@@ -70,8 +71,10 @@ division:
 	mov r10, rax
 	pop rsi
 	call char_to_int
+	mov r11, rax
+	mov rax, r10
 	mov rdx, 0
-	div r10
+	div r11
 	jmp print_result
 
 
