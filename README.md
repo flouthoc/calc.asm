@@ -3,7 +3,7 @@
 ![img](https://raw.githubusercontent.com/flouthoc/calc.asm/master/art/calc.gif)
 
 <hr>
-This a simple arithmetic calculator written in x86 assembly with minimalistic operation support like `Addition` , `Subtraction` , `Multiplication` and `Division`.I have tried to kept <strong>source highly documented</strong> by commenting on each line so that beginners can easily understand the source.If you feel that these comments source or anything can be improved create a pull-request now. 
+This a simple arithmetic calculator written in x86 assembly with minimalistic operation support like `Addition` , `Subtraction` , `Multiplication` and `Division`.I have tried to kept <strong>source highly documented</strong> by commenting on each line so that beginners can easily understand the source.If you feel that these comments source or anything can be improved create a pull-request now. If you found it useful <strong> Star it </strong> or <strong>follow me on github </strong>
 
 
 <h4>Usage</h4>
