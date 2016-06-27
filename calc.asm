@@ -36,7 +36,7 @@ _start:
 addition:
 	pop rsi ;Let's Pop our second argument (i.e argv[2]) from argument stack which is our <operand1>
 	;Well even if it is a number it is in its ASCII code representation lets convert it to our actual integer
-	;This is function will take number in its ASCII form (rsi as arugment) and return its integer equivalent in rax
+	;This is function will take number in its ASCII form (rsi as argument) and return its integer equivalent in rax
 	call char_to_int
 	mov r10, rax ;Lets store integer equivalent of <operand1> in r10
 	pop rsi ;Let's Pop our third argument (i.e argv[3]) from argument stack which is our <operand2>
