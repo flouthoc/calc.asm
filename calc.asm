@@ -13,14 +13,14 @@ section .text
 
 _start:
 	pop rdx ;put argc in rdx from the stack, so we can check number of arguments
-	cmp rdx, 4 ;if number of arguments are lesser that 4 i.e <operator> <operand1> <operand2>
-	jne few_args ; go to error block - prompt 'FEW_ARGS' and exit
-	add rsp, 8 ; remove argv[0] that is programme name
+	cmp rdx, 4 ;compare the number of arguments against 4
+	jne few_args ; if number of arguments is less than 4 (i.e. [program-name] <operator> <operand1> <operand2>) go to error block - prompt 'FEW_ARGS' and exit
+	add rsp, 8 ; skip over argv[0], the programme name - rsp is now pointing at argv[1] (4 bytes + 4 bytes = 8)
 	pop rsi ;let's pop our first argument (i.e argv[1]) from argument stack which is our operand
 
 	;This is part is all checking part which switches the block according to our <operand> + - / *
 	cmp byte[rsi], 0x2A ;If operator is '*' then goto block multiplication , can be used only if escaped manually while giving input 
-        je multiplication
+	je multiplication
 	cmp byte[rsi], 0x78 ;If operator is 'x' then goto block multiplication , cause you know some shells or every have '*' as wildcard
 	je multiplication
 	cmp byte[rsi], 0x2B ;If operator is '+' then goto block addition
@@ -42,7 +42,7 @@ addition:
 	pop rsi ;Let's Pop our third argument (i.e argv[3]) from argument stack which is our <operand2>
 	call char_to_int ;Do same for <operand2>
 	add rax, r10 ;Let's add them integer equivalent of <operand1> and integer equivalent of <operand2> 
-	jmp print_result ;Throw cursor at block print cursor , we'll we have to print result right ?
+	jmp print_result ;Throw cursor at block print cursor, which will print the result
 
 ;Same thing we are doing in block subtraction , multiplication and division
 
@@ -58,10 +58,10 @@ subtraction:
 
 multiplication:
 	pop rsi
-        call char_to_int
-        mov r10, rax
-        pop rsi
-        call char_to_int
+	call char_to_int
+	mov r10, rax
+	pop rsi
+	call char_to_int
 	mul r10
 	jmp print_result
 
@@ -74,7 +74,7 @@ division:
 	mov r11, rax
 	mov rax, r10
 	mov rdx, 0
-	div r11
+	div r11 ;Divide the value in rax (implied by 'div') by r11
 	jmp print_result
 
 
@@ -125,25 +125,33 @@ invalid_operand:
 char_to_int:
 	xor al, al ;store zero in al
 	xor cl, cl ;same
-	mov dl, 10
+	mov dl, 10 ; store dl 10 in dl - the input string is in base 10, so each place value increases by a factor of 10
 	
 .loop_block:
 
 	;REMEMBER rsi is base address to the string which we want to convert to integer equivalent
 
 	mov cl, [rsi] ;Store value at address (rsi + 0) or (rsi + index) in cl, rsi is incremented below so dont worry about where is index.
-	cmp cl, byte 0 ;If value at address (rsi + index ) is byte 0 , means our string is terminated here
+	cmp cl, byte 0 ;If value at address (rsi + index ) is byte 0 (NULL) , means our string is terminated here
 	je .return_block
 
-	;Each digit must be between 0 and 9
+	;Each digit must be between 0 (ASCII code 48) and 9 (ASCII code 57)
 	cmp cl, 0x30 ;If value is lesser than 0 goto invalid operand 
 	jl invalid_operand
 	cmp cl, 0x39 ;If value is greater than 9 goto invalid operand
 	jg invalid_operand
 
-	sub cl, 48 ;Convert ASCII to integer by subtracting 48 , google about it
-	mul dl ;Is it the most significant digit and other digits are also there in number then shift its place like unit-to-tenth , tenth-to-hundred.
-	add al, cl ;Add other digit to the existing greater number like if number is 23 then add 3 to 20.
+	sub cl, 48 ;Convert ASCII to integer by subtracting 48 - '0' is ASCII code 48, so subtracting 48 gives us the integer value
+
+	;Multiply the value in 'al' (implied by 'mul') by dl (always 10). This can be thought of as shifting the current value
+	;to the left by one place (e.g. '123' -> '1230'), which 'makes room' for the current digit to be added onto the end.
+	;The result is stored in al.
+	mul dl
+
+	;Add the current digit, stored in cl, to the current intermediate number.
+	;The resulting sum will be mulitiplied by 10 during the next iteration of the loop, with a new digit being added onto it
+	add al, cl
+
 	inc rsi ;Increment the rsi's index i.e (rdi + index ) we are incrementing the index
 
 	jmp .loop_block ;Keep looping until loop breaks on its own
@@ -167,14 +175,14 @@ int_to_char:
 
 .loop_block:
 	mov rdx, 0 
-	div rbx    ;Get the LSB by dividing number by 10 , LSB will be remainder like 23 divider 10 will give us 3 as remainder which is LSB here
-	cmp rax, 0 ;If rax becomes 0 our procedure reached to the MSB of the number we should leave now
-        je .return_block
-        add dl, 48 ;Convert each digit to its ASCII value
-        mov [r9], dl ;Store the ASCII value in memory by using r9 as index
-        dec r9 ;Dont forget to decrement r9 remember we are using memory backwards
+	div rbx    ;Get the LSB by dividing number by 10 , LSB will be remainder (stored in 'dl') like 23 divider 10 will give us 3 as remainder which is LSB here
+	cmp rax, 0 ;If rax (quotient) becomes 0 our procedure reached to the MSB of the number we should leave now
+	je .return_block
+	add dl, 48 ;Convert each digit to its ASCII value
+	mov [r9], dl ;Store the ASCII value in memory by using r9 as index
+	dec r9 ;Dont forget to decrement r9 remember we are using memory backwards
 	inc r11 ;Increment size as soon as you add a digit in memory
-        jmp .loop_block ;Loop until it breaks on its own
+	jmp .loop_block ;Loop until it breaks on its own
 	
 .return_block:
 	add dl, 48 ;Don't forget to repeat the routine for out last MSB as loop ended early
@@ -189,7 +197,3 @@ exit:
 	syscall
 
 ;We are all done :) If you think you can improve this more make a pull request (http://github.com/flouthoc/calc.asm)
-
-
-
-	
