@@ -101,7 +101,7 @@ few_args:
 	mov rsi, FEW_ARGS
 	mov rdx, 18
 	syscall
-	jmp exit
+	jmp error_exit
 
 invalid_operator:
 	mov rax, 1
@@ -109,7 +109,7 @@ invalid_operator:
 	mov rsi, INVALID_OPERATOR
 	mov rdx, 17
 	syscall
-	jmp exit
+	jmp error_exit
 
 invalid_operand:
 	mov rax, 1
@@ -117,7 +117,7 @@ invalid_operand:
 	mov rsi, INVALID_OPERAND
 	mov rdx, 16
 	syscall
-	jmp exit
+	jmp error_exit
 
 
 ;This is the function which will convert our character input to integers
@@ -191,6 +191,12 @@ int_to_char:
 	dec r9
 	inc r11
 	ret
+
+;Syscall 60 is exit. Return code normally is 0, on errors set it to 1
+error_exit:
+	mov rax, 60
+	mov rdi, 1
+	syscall
 
 exit:
 	mov rax, 60
