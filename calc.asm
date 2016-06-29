@@ -96,28 +96,38 @@ print_result:
 ;Read previous comments, just performing printing in these blocks
 ;As per convention error messages are printed to stderr(2)
 few_args:
-	mov rax, 1
-	mov rdi, 2
-	mov rsi, FEW_ARGS
-	mov rdx, 18
-	syscall
-	jmp error_exit
+	mov rdi, FEW_ARGS
+	call print_error
 
 invalid_operator:
-	mov rax, 1
-	mov rdi, 2
-	mov rsi, INVALID_OPERATOR
-	mov rdx, 17
-	syscall
-	jmp error_exit
+	mov rdi, INVALID_OPERATOR
+	call print_error
 
 invalid_operand:
-	mov rax, 1
-	mov rdi, 2
-	mov rsi, INVALID_OPERAND
-	mov rdx, 16
+	mov rdi, INVALID_OPERAND
+	call print_error
+
+print_error:
+	push rdi
+	call strlen ;calculate the length of rdi (error message)
+	mov rdi, 2 ;write to stderr
+	pop rsi
+	mov rdx, rax ;result of strlen
+	mov rax, 1 ;write syscall
 	syscall
-	jmp error_exit
+	call error_exit
+	ret
+
+strlen:
+	xor rax, rax ;store zero in rax
+.strlen_loop:
+	cmp BYTE [rdi + rax], 0xA ;compare byte to a newline
+	je .strlen_break ;break if the current byte is a newline
+	inc rax
+	jmp .strlen_loop ;repeat if the current byte isn't a newline
+.strlen_break:
+	inc rax ;add one to string length to count the newline
+	ret
 
 
 ;This is the function which will convert our character input to integers
