@@ -19,7 +19,7 @@ _start:
 	pop rsi ;let's pop our first argument (i.e argv[1]) from argument stack which is our operand
 
 	;This is part is all checking part which switches the block according to our <operand> + - / *
-	cmp byte[rsi], 0x2A ;If operator is '*' then goto block multiplication , can be used only if escaped manually while giving input 
+	cmp byte[rsi], 0x2A ;If operator is '*' then goto block multiplication , can be used only if escaped manually while giving input
 	je multiplication
 	cmp byte[rsi], 0x78 ;If operator is 'x' then goto block multiplication , cause you know some shells or every have '*' as wildcard
 	je multiplication
@@ -27,8 +27,10 @@ _start:
 	je addition
 	cmp byte[rsi], 0x2D ;If operator is '-' then goto block subtraction
 	je subtraction
-	cmp byte[rsi], 0x2F ;If operator is '/' then goto block division 
+	cmp byte[rsi], 0x2F ;If operator is '/' then goto block division
 	je division
+	cmp byte[rsi], 0x25 ;If operator is '%' then goto block modulo
+	je modulo
 
 	;If <operator> does not match to any case then goto block invalid_operator
 	jmp invalid_operator ; go to error block - prompt 'Invalid Operator' and exit
@@ -41,7 +43,7 @@ addition:
 	mov r10, rax ;Lets store integer equivalent of <operand1> in r10
 	pop rsi ;Let's Pop our third argument (i.e argv[3]) from argument stack which is our <operand2>
 	call char_to_int ;Do same for <operand2>
-	add rax, r10 ;Let's add them integer equivalent of <operand1> and integer equivalent of <operand2> 
+	add rax, r10 ;Let's add them integer equivalent of <operand1> and integer equivalent of <operand2>
 	jmp print_result ;Throw cursor at block print cursor, which will print the result
 
 ;Same thing we are doing in block subtraction , multiplication and division
@@ -77,14 +79,27 @@ division:
 	div r11 ;Divide the value in rax (implied by 'div') by r11
 	jmp print_result
 
+modulo:
+	pop rsi
+	call char_to_int
+	mov r10, rax
+	pop rsi
+	call char_to_int
+	mov r11, rax
+    mov rax, r10
+    mov rdx, 0
+    div r11
+    mov rax, rdx ;Move the remainder into rax
+    jmp print_result
+
 
 ;This block is responsible for printing the content to the screen
-;you have to store your content in rax and jump to it , it'll do the rest :) 
+;you have to store your content in rax and jump to it , it'll do the rest :)
 print_result:
 	;This function will convert our integer in rax back to ASCII format (character)
 	; Argument - takes integer to be converted (must be stored in rax)
-	; Returns pointer to the char string (returns r9 as pointer to the string or char) 
-	call int_to_char 
+	; Returns pointer to the char string (returns r9 as pointer to the string or char)
+	call int_to_char
 	mov rax, 1 ;Store syscall number , 1 is for sys_write
 	mov rdi, 1 ;Descriptor where we want to write , 1 is for stdout
 	mov rsi, r9 ;This is pointer to the string which was returned by int_to_char
@@ -137,7 +152,7 @@ char_to_int:
 	xor al, al ;store zero in al
 	xor cl, cl ;same
 	mov dl, 10 ; store dl 10 in dl - the input string is in base 10, so each place value increases by a factor of 10
-	
+
 .loop_block:
 
 	;REMEMBER rsi is base address to the string which we want to convert to integer equivalent
@@ -147,7 +162,7 @@ char_to_int:
 	je .return_block
 
 	;Each digit must be between 0 (ASCII code 48) and 9 (ASCII code 57)
-	cmp cl, 0x30 ;If value is lesser than 0 goto invalid operand 
+	cmp cl, 0x30 ;If value is lesser than 0 goto invalid operand
 	jl invalid_operand
 	cmp cl, 0x39 ;If value is greater than 9 goto invalid operand
 	jg invalid_operand
@@ -182,10 +197,10 @@ int_to_char:
 	dec r9 ;Decrement memory index
 	mov [r9], byte 0XA ;Store break line
 	dec r9 ;Decrement memory index
-	mov r11, 2;r11 will store the size of our string stored in buffer we will use it while printing as argument to sys_write 
+	mov r11, 2;r11 will store the size of our string stored in buffer we will use it while printing as argument to sys_write
 
 .loop_block:
-	mov rdx, 0 
+	mov rdx, 0
 	div rbx    ;Get the LSB by dividing number by 10 , LSB will be remainder (stored in 'dl') like 23 divider 10 will give us 3 as remainder which is LSB here
 	cmp rax, 0 ;If rax (quotient) becomes 0 our procedure reached to the MSB of the number we should leave now
 	je .return_block
@@ -194,7 +209,7 @@ int_to_char:
 	dec r9 ;Dont forget to decrement r9 remember we are using memory backwards
 	inc r11 ;Increment size as soon as you add a digit in memory
 	jmp .loop_block ;Loop until it breaks on its own
-	
+
 .return_block:
 	add dl, 48 ;Don't forget to repeat the routine for out last MSB as loop ended early
 	mov [r9], dl
