@@ -149,9 +149,9 @@ strlen:
 ;Argument - pointer to string or char ( takes rsi as argument )
 ;Returns equivalent integer value (in rax)
 char_to_int:
-	xor al, al ;store zero in al
-	xor cl, cl ;same
-	mov dl, 10 ; store dl 10 in dl - the input string is in base 10, so each place value increases by a factor of 10
+	xor ax, ax ;store zero in ax
+	xor cx, cx ;same
+	mov bx, 10 ; store 10 in bx - the input string is in base 10, so each place value increases by a factor of 10
 
 .loop_block:
 
@@ -169,14 +169,14 @@ char_to_int:
 
 	sub cl, 48 ;Convert ASCII to integer by subtracting 48 - '0' is ASCII code 48, so subtracting 48 gives us the integer value
 
-	;Multiply the value in 'al' (implied by 'mul') by dl (always 10). This can be thought of as shifting the current value
+	;Multiply the value in 'ax' (implied by 'mul') by bx (always 10). This can be thought of as shifting the current value
 	;to the left by one place (e.g. '123' -> '1230'), which 'makes room' for the current digit to be added onto the end.
-	;The result is stored in al.
-	mul dl
+	;The result is stored in dx:ax.
+	mul bx
 
 	;Add the current digit, stored in cl, to the current intermediate number.
 	;The resulting sum will be mulitiplied by 10 during the next iteration of the loop, with a new digit being added onto it
-	add al, cl
+	add ax, cx
 
 	inc rsi ;Increment the rsi's index i.e (rdi + index ) we are incrementing the index
 
