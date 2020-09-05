@@ -19,6 +19,7 @@ This a simple arithmetic calculator written in x86 assembly with minimalistic op
 
 
 <h4>Compiling</h4>
+
 ```bash
 nasm -f elf64 -o calc.o calc.asm
 ld -d calc calc.o
