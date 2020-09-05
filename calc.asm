@@ -1,5 +1,5 @@
 ;author - http://github.com/flouthoc
-;Contributers - Add your name here
+;Contributors - Add your name here
 ;; ----------------- calc.asm - Minimal arithmetic calculator in x86 assembly -------------------
 section .data
 	FEW_ARGS: db "Too Few Arguments", 0xA
